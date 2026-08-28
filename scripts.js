@@ -38,6 +38,7 @@ class VideoBlock {
         this._wrapper.appendChild(this._video);
 
         this._video.preload = 'auto';
+        this._video.playsInline = true;
         this._video.loop = true;
         this._video.src = 'videos/' + this.url;
 
@@ -51,7 +52,13 @@ class VideoBlock {
         })
 
         this._video.addEventListener('play', this._canvasVideoSync);
-        this._video.addEventListener('loadeddata', this._canvasVideoSync);
+        this._video.addEventListener("loadedmetadata", () => {
+            this._video.currentTime = 0.01;
+        });
+
+        this._video.addEventListener("seeked", () => {
+            this._canvasVideoSync();
+        }, { once: true });
 
         const layout = document.createElement('div');
         layout.classList.add('info-layout')
